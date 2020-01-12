@@ -1,4 +1,4 @@
-# mapr [![Build Status](https://travis-ci.org/rcaught/mapr.svg?branch=master)](https://travis-ci.org/rcaught/mapr) [![GoDoc](https://godoc.org/github.com/rcaught/mapr?status.svg)](https://godoc.org/github.com/rcaught/mapr)
+# mapr [![Build Status](https://travis-ci.org/rcaught/mapr.svg?branch=master)](https://travis-ci.org/rcaught/mapr)
 
 Apply commands to values of structured data, with optional key filtering.
 
