@@ -20,9 +20,9 @@ func main() {
 		EnableBashCompletion: true,
 		Flags: []cli.Flag{
 			cli.StringFlag{
-				Name:    "input-format",
-				Value:   "json",
-				Usage:   "Input data format",
+				Name:  "input-format",
+				Value: "json",
+				Usage: "Input data format",
 			},
 			cli.StringFlag{
 				Name:  "key-filter-type",
@@ -69,7 +69,7 @@ func main() {
 	}
 }
 
-func filterable(key string, keyFilterType string, keyFilter string) bool {
+func filterMatch(key string, keyFilterType string, keyFilter string) bool {
 	if keyFilter == "" || keyFilterType == "" {
 		return false
 	}
@@ -91,30 +91,30 @@ func mapValues(c *cli.Context, data map[string]interface{}) map[string]interface
 		keyFilterStrip := c.Bool("key-filter-strip")
 
 		if value, ok := v.(string); ok {
-			if filterable(k, keyFilterType, keyFilter) {
-				shellCommand := strings.ReplaceAll(c.Args().Get(0), c.String("command-reference"), value)
-				out, err := exec.Command("sh", "-c", shellCommand).Output()
+			if keyFilterType != "" && keyFilter != "" {
+				if filterMatch(k, keyFilterType, keyFilter) {
+					value = applyCommand(c, value)
 
-				if err != nil {
-					log.Fatal(err)
-				}
+					if keyFilterStrip {
+						delete(data, k)
+					}
 
-				if keyFilterStrip {
-					delete(data, k)
-				}
+					switch keyFilterType {
+					case "prefix":
+						k = strings.TrimPrefix(k, keyFilter)
+					case "suffix":
+						k = strings.TrimSuffix(k, keyFilter)
+					}
 
-				switch keyFilterType {
-				case "prefix":
-					k = strings.TrimPrefix(k, keyFilter)
-				case "suffix":
-					k = strings.TrimSuffix(k, keyFilter)
 				}
+			} else {
+				value = applyCommand(c, value)
+			}
 
-				if !c.Bool("command-no-trim") {
-					data[k] = strings.TrimSpace(string(out))
-				} else {
-					data[k] = string(out)
-				}
+			if !c.Bool("command-no-trim") {
+				data[k] = strings.TrimSpace(value)
+			} else {
+				data[k] = value
 			}
 		} else if value, ok := v.(map[string]interface{}); ok {
 			mapValues(c, value)
@@ -145,4 +145,15 @@ func outputJSON(certainlyJSON map[string]interface{}) {
 		os.Stdout.Write(jsonOutput)
 		os.Exit(0)
 	}
+}
+
+func applyCommand(c *cli.Context, dataValue string) string {
+	shellCommand := strings.ReplaceAll(c.Args().Get(0), c.String("command-reference"), dataValue)
+	out, err := exec.Command("sh", "-c", shellCommand).Output()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(out)
 }
