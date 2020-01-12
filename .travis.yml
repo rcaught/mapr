@@ -1,0 +1,31 @@
+language: go
+go:
+- '1.13'
+install:
+- go mod tidy
+- go build -v ./...
+before_deploy:
+- mkdir -p releases/linux
+- mkdir -p releases/darwin
+- GOOS=linux GOARCH=amd64 go build -o releases/linux/mapr github.com/rcaught/mapr
+- GOOS=darwin GOARCH=amd64 go build -o releases/darwin/mapr github.com/rcaught/mapr
+- cd releases/linux
+- chmod +x mapr
+- zip linux.zip mapr
+- cd ../darwin
+- chmod +x mapr
+- zip macos.zip mapr
+- cd ../..
+deploy:
+  provider: releases
+  skip_cleanup: true
+  overwrite: true
+  api_key:
+    secure: Cg7k/1VSYPjb+g+XF3cqiEIQiXAmscAsEeVdwYkabgfwITBNH8gOkg1rOjY/yvCzZBVkdci8QHn6e9NMdhDjOHaNz31YHIQPx0airJNjJYtwhW1Dh2+NLXZy9VoTJVwXut2PQD+naXN+UMoQ98SeLM9vptCHgIbZX0fSA6lbqn1xusG6d1e20kiSPqp3ZoAthj4qnoi+id5e0hW9J6/GVMLbbYYHrOO7FNRUtwNqojPLzpwyK3xBeLHoWuc5rhY5qehIpGMd4CfKmuzCb8Fkm41cEYyVkQHliCl/ZN3zfmMlPKESgWRNLcCh8jmhq1U1lhd3P/10EjdkeFZorCqITUZcZSAdDELthQPT64rNILfZccT1K4QxG082nHTBXjZWMtBO2CN2q0SWhpzqGIEQt2Sy0lbnel5+y9iq3DitP1cB2N++5qfvU6AT8TacpRggtHq0mm6uPGZibCzdI7WKiOklxXOE/O6cUM4Nw5gzr8MnXks4lZvlYoys6cLIQsZVnvY/IeY7Z9xUQve/nqrpsWrBQ1AWJAa30/5li+yvIQHyJHqpH4ih2Ay/aiVJRJEu0fmYwGmLvXRq0QR4vlzjvlCmerjyKZzoZM7LPr8aFSNyDdfouWN2stXf/qUV6lkuYQ74aC060MNy9/JcZHKndfe5ct1yPnlZFGPGLE3Wz90=
+  file:
+  - releases/linux/linux.zip
+  - releases/darwin/macos.zip
+  on:
+    repo: rcaught/mapr
+    tags: true
+    
