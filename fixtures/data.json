@@ -1,0 +1,11 @@
+{
+    "hello": "there",
+    "goodbye": {
+        "special_enc": "asdf",
+        "not_special": "asdf"
+    },
+    "problem_key_enc": {
+        "because_i_have_wrong_value": true
+    },
+    "special_enc": "asdf"
+}
