@@ -1,13 +1,17 @@
 # mapr [![Build Status](https://travis-ci.org/rcaught/mapr.svg?branch=master)](https://travis-ci.org/rcaught/mapr)
 
-Apply commands to values of structured data, with optional key filtering.
+Apply a command to values of structured data, with optional key filtering.
 
 ## Installation
 ##### Go
 ```
 $ go get github.com/rcaught/mapr/...
 ```
-##### MacOS
+##### MacOS (Homebrew via own tap)
+```
+$ brew install rcaught/homebrew/mapr
+```
+##### MacOS (manually)
 ```
 $ curl -Ls https://github.com/rcaught/mapr/releases/latest/download/macos.zip > /tmp/mapr.zip
 $ unzip /tmp/mapr.zip -d /usr/local/bin
