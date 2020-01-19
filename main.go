@@ -106,11 +106,11 @@ func filterMatch(key string, keyFilterType string, keyFilter string) bool {
 }
 
 func mapValues(c *cli.Context, data map[string]interface{}) map[string]interface{} {
-	for k, v := range data {
-		keyFilter := c.String("key-filter")
-		keyFilterType := c.String("key-filter-type")
-		keyFilterStrip := c.Bool("key-filter-strip")
+	keyFilter := c.String("key-filter")
+	keyFilterType := c.String("key-filter-type")
+	keyFilterStrip := c.Bool("key-filter-strip")
 
+	for k, v := range data {
 		if value, ok := v.(string); ok {
 			if keyFilterType != "" && keyFilter != "" {
 				if filterMatch(k, keyFilterType, keyFilter) {
@@ -118,15 +118,14 @@ func mapValues(c *cli.Context, data map[string]interface{}) map[string]interface
 
 					if keyFilterStrip {
 						delete(data, k)
-					}
 
-					switch keyFilterType {
-					case "prefix":
-						k = strings.TrimPrefix(k, keyFilter)
-					case "suffix":
-						k = strings.TrimSuffix(k, keyFilter)
+						switch keyFilterType {
+						case "prefix":
+							k = strings.TrimPrefix(k, keyFilter)
+						case "suffix":
+							k = strings.TrimSuffix(k, keyFilter)
+						}
 					}
-
 				}
 			} else {
 				value = applyCommand(c, value)
@@ -141,6 +140,7 @@ func mapValues(c *cli.Context, data map[string]interface{}) map[string]interface
 			mapValues(c, value)
 		}
 	}
+
 	return data
 }
 
