@@ -50,6 +50,10 @@ func main() {
 		},
 		Action: func(c *cli.Context) error {
 			bytes, _ := ioutil.ReadAll(os.Stdin)
+			if c.NArg() == 0 {
+				log.Fatal("Must pass a command to apply to values")
+			}
+
 
 			switch strings.ToLower(c.String("input-format")) {
 			case "json":
