@@ -16,7 +16,7 @@ func main() {
 		Name:                 "mapr",
 		Usage:                "Apply a command to values of structured data, with optional key filtering.",
 		UsageText:            "[global options] command",
-		Version:              "0.0.1",
+		Version:              "0.1.0",
 		EnableBashCompletion: true,
 		Flags: []cli.Flag{
 			cli.StringFlag{
