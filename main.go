@@ -25,6 +25,11 @@ func main() {
 				Usage: "Input data format",
 			},
 			cli.StringFlag{
+				Name:  "input-file",
+				Value: "",
+				Usage: "Input file (or pipe to stdin)",
+			},
+			cli.StringFlag{
 				Name:  "key-filter-type",
 				Value: "",
 				Usage: "[prefix|suffix]",
@@ -49,11 +54,23 @@ func main() {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			bytes, _ := ioutil.ReadAll(os.Stdin)
 			if c.NArg() == 0 {
 				log.Fatal("Must pass a command to apply to values")
 			}
 
+			var bytes []byte
+			var fileErr error
+
+			if c.String("input-file") == "" {
+				bytes, fileErr = ioutil.ReadAll(os.Stdin)
+			} else {
+				bytes, fileErr = ioutil.ReadFile(c.String("input-file"))
+
+			}
+
+			if fileErr != nil {
+				log.Fatal(fileErr)
+			}
 
 			switch strings.ToLower(c.String("input-format")) {
 			case "json":
